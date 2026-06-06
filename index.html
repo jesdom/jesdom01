@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academia IA — Aprende Inteligencia Artificial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="logo">Academia<span>IA</span></a>
+      <ul class="nav-links">
+        <li><a href="#cursos">Cursos</a></li>
+        <li><a href="#sobre">Sobre nosotros</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+      <a href="#cursos" class="btn btn-primary nav-cta">Ver cursos</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container hero-content">
+      <p class="hero-eyebrow">Formación profesional en</p>
+      <h1 class="hero-title">Inteligencia<br />Artificial</h1>
+      <p class="hero-subtitle">Domina las tecnologías que están transformando el mundo. Cursos prácticos, certificados y diseñados por expertos.</p>
+      <div class="hero-actions">
+        <a href="#cursos" class="btn btn-primary">Explorar cursos</a>
+        <a href="#sobre" class="btn btn-outline">Conocer más</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">+2,400</span>
+          <span class="stat-label">Estudiantes</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">12</span>
+          <span class="stat-label">Cursos disponibles</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">98%</span>
+          <span class="stat-label">Satisfacción</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-decoration"></div>
+  </header>
+
+  <!-- CURSOS -->
+  <section id="cursos" class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">Catálogo</p>
+        <h2 class="section-title">Nuestros cursos</h2>
+        <p class="section-desc">Desde fundamentos hasta aplicaciones avanzadas. Elige el camino que mejor se adapte a tus objetivos.</p>
+      </div>
+
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="basico">Básico</button>
+        <button class="filter-btn" data-filter="intermedio">Intermedio</button>
+        <button class="filter-btn" data-filter="avanzado">Avanzado</button>
+      </div>
+
+      <div class="courses-grid">
+
+        <div class="course-card" data-level="basico">
+          <div class="card-badge basico">Básico</div>
+          <div class="card-icon">🤖</div>
+          <div class="card-body">
+            <h3 class="card-title">Introducción a la IA</h3>
+            <p class="card-desc">Comprende los fundamentos de la inteligencia artificial, su historia y sus aplicaciones actuales.</p>
+            <div class="card-meta">
+              <span>📚 18 lecciones</span>
+              <span>⏱ 6 horas</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="card-price">$49</span>
+            <a href="#contacto" class="btn btn-primary btn-sm">Inscribirse</a>
+          </div>
+        </div>
+
+        <div class="course-card" data-level="basico">
+          <div class="card-badge basico">Básico</div>
+          <div class="card-icon">💬</div>
+          <div class="card-body">
+            <h3 class="card-title">Prompting con ChatGPT</h3>
+            <p class="card-desc">Aprende a comunicarte efectivamente con modelos de lenguaje para obtener resultados profesionales.</p>
+            <div class="card-meta">
+              <span>📚 22 lecciones</span>
+              <span>⏱ 8 horas</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="card-price">$59</span>
+            <a href="#contacto" class="btn btn-primary btn-sm">Inscribirse</a>
+          </div>
+        </div>
+
+        <div class="course-card featured" data-level="intermedio">
+          <div class="card-badge intermedio">Intermedio</div>
+          <div class="featured-tag">⭐ Más popular</div>
+          <div class="card-icon">🧠</div>
+          <div class="card-body">
+            <h3 class="card-title">Machine Learning Aplicado</h3>
+            <p class="card-desc">Construye modelos predictivos reales con Python, scikit-learn y datasets del mundo real.</p>
+            <div class="card-meta">
+              <span>📚 40 lecciones</span>
+              <span>⏱ 18 horas</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="card-price">$149</span>
+            <a href="#contacto" class="btn btn-primary btn-sm">Inscribirse</a>
+          </div>
+        </div>
+
+        <div class="course-card" data-level="intermedio">
+          <div class="card-badge intermedio">Intermedio</div>
+          <div class="card-icon">🎨</div>
+          <div class="card-body">
+            <h3 class="card-title">IA Generativa para Creativos</h3>
+            <p class="card-desc">Domina Midjourney, DALL-E y Stable Diffusion para crear imágenes y contenido visual con IA.</p>
+            <div class="card-meta">
+              <span>📚 28 lecciones</span>
+              <span>⏱ 10 horas</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="card-price">$99</span>
+            <a href="#contacto" class="btn btn-primary btn-sm">Inscribirse</a>
+          </div>
+        </div>
+
+        <div class="course-card" data-level="avanzado">
+          <div class="card-badge avanzado">Avanzado</div>
+          <div class="card-icon">🔬</div>
+          <div class="card-body">
+            <h3 class="card-title">Deep Learning con PyTorch</h3>
+            <p class="card-desc">Diseña y entrena redes neuronales profundas para visión por computadora y NLP.</p>
+            <div class="card-meta">
+              <span>📚 55 lecciones</span>
+              <span>⏱ 25 horas</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="card-price">$199</span>
+            <a href="#contacto" class="btn btn-primary btn-sm">Inscribirse</a>
+          </div>
+        </div>
+
+        <div class="course-card" data-level="avanzado">
+          <div class="card-badge avanzado">Avanzado</div>
+          <div class="card-icon">⚙️</div>
+          <div class="card-body">
+            <h3 class="card-title">LLMs y Agentes Autónomos</h3>
+            <p class="card-desc">Construye agentes inteligentes con LangChain, RAG y APIs de modelos de lenguaje de última generación.</p>
+            <div class="card-meta">
+              <span>📚 48 lecciones</span>
+              <span>⏱ 22 horas</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="card-price">$229</span>
+            <a href="#contacto" class="btn btn-primary btn-sm">Inscribirse</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE NOSOTROS -->
+  <section id="sobre" class="section section-alt">
+    <div class="container about-grid">
+      <div class="about-text">
+        <p class="section-eyebrow">¿Por qué elegirnos?</p>
+        <h2 class="section-title">Formación diseñada para el mundo real</h2>
+        <p>En Academia IA nos especializamos en llevar el conocimiento de vanguardia en inteligencia artificial a profesionales, emprendedores y estudiantes que quieren mantenerse relevantes en la economía digital.</p>
+        <ul class="about-list">
+          <li><span class="check">✓</span> Instructores con experiencia en la industria</li>
+          <li><span class="check">✓</span> Proyectos prácticos con datos reales</li>
+          <li><span class="check">✓</span> Certificado de finalización reconocido</li>
+          <li><span class="check">✓</span> Acceso de por vida al material del curso</li>
+          <li><span class="check">✓</span> Comunidad privada de estudiantes</li>
+        </ul>
+      </div>
+      <div class="about-visual">
+        <div class="about-card">
+          <div class="about-icon">🎓</div>
+          <h4>Aprendizaje a tu ritmo</h4>
+          <p>Accede al contenido cuando quieras y avanza según tu disponibilidad.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">💡</div>
+          <h4>Contenido actualizado</h4>
+          <p>El mundo de la IA cambia rápido. Nuestro material se actualiza constantemente.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">🤝</div>
+          <h4>Mentoría personalizada</h4>
+          <p>Sesiones en vivo y soporte directo con los instructores.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" class="section">
+    <div class="container contact-wrapper">
+      <div class="section-header">
+        <p class="section-eyebrow">¿Listo para empezar?</p>
+        <h2 class="section-title">Contáctanos</h2>
+        <p class="section-desc">Déjanos tus datos y un asesor te contactará para ayudarte a elegir el curso ideal.</p>
+      </div>
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">Nombre completo</label>
+            <input type="text" id="nombre" placeholder="Tu nombre" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" placeholder="tu@email.com" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="curso">Curso de interés</label>
+          <select id="curso">
+            <option value="">Selecciona un curso</option>
+            <option>Introducción a la IA</option>
+            <option>Prompting con ChatGPT</option>
+            <option>Machine Learning Aplicado</option>
+            <option>IA Generativa para Creativos</option>
+            <option>Deep Learning con PyTorch</option>
+            <option>LLMs y Agentes Autónomos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="mensaje">Mensaje (opcional)</label>
+          <textarea id="mensaje" rows="4" placeholder="¿Tienes alguna pregunta?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Enviar mensaje</button>
+        <p class="form-note" id="form-success" style="display:none;">✓ Mensaje enviado. Te contactaremos pronto.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a href="#" class="logo">Academia<span>IA</span></a>
+      <p class="footer-copy">© 2025 Academia IA. Todos los derechos reservados.</p>
+      <div class="footer-links">
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
