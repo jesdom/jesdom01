@@ -17,7 +17,7 @@
     "title": "ESTO LO\nEDITO CODIGO",
     "subtitle": "sin tocar un timeline",
     "plate_darken": 0.84,
-    "center": true
+    "center": false
   },
   "outro": {
     "duration": 1.5,
@@ -40,12 +40,13 @@
     "enabled": true,
     "size": 84,
     "max_words": 3,
-    "max_chars": 22,
+    "max_chars": 20,
     "y": 0.74,
     "fix_words": {
       "cloud": "Claude",
       "clod": "Claude"
-    }
+    },
+    "max_width": 0.86
   },
   "grade": {
     "lut": {

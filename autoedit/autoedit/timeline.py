@@ -181,6 +181,24 @@ def build(transcript, ranges, cfg, fps=30, seed=7):
                       "start": max(intro, to_out(hit) + spec.get("delay", 0.25)),
                       "dur": spec.get("dur", 2.4)})
 
+    # -------------------------------------- tarjetas de datos (refuerzo) ----
+    cards = []
+    for spec in cfg.get("cards", []):
+        trig = _norm(spec.get("after_word", ""))
+        hit = None
+        for seg in transcript or []:
+            for w in seg.get("words", []):
+                if _norm(w["w"]) == trig:
+                    hit = w["s"]
+                    break
+            if hit is not None:
+                break
+        if hit is None:
+            continue
+        cards.append({"title": spec.get("title", ""), "items": spec.get("items", []),
+                      "start": max(intro, to_out(hit) + spec.get("delay", 0.25)),
+                      "dur": spec.get("dur", 2.4)})
+
     # ------------------------------------------------------- SFX + shakes ---
     sfx = [{"t": 0.05, "kind": "riser", "dur": max(0.5, intro - 0.15), "gain": 0.9},
            {"t": intro - 0.22, "kind": "impact", "gain": 0.9}]
@@ -192,6 +210,11 @@ def build(transcript, ranges, cfg, fps=30, seed=7):
     for it in caption_items[:40]:
         sfx.append({"t": it["start"], "kind": "pop", "gain": 0.35,
                     "freq": 820 + (int(it["start"] * 7) % 5) * 90})
+    for cd in cards:   # un chip y una tarjeta nunca compiten por la misma banda
+        chips[:] = [c for c in chips
+                    if c["start"] + c["dur"] < cd["start"] - 0.1
+                    or c["start"] > cd["start"] + cd["dur"] + 0.3]
+        sfx.append({"t": cd["start"], "kind": "whoosh", "gain": 0.4, "seed": 77, "dir": -1})
     for ch in chips:
         sfx.append({"t": ch["start"], "kind": "pop", "gain": 0.5, "freq": 1250})
     for cd in cards:
@@ -202,7 +225,7 @@ def build(transcript, ranges, cfg, fps=30, seed=7):
 
     return {
         "fps": fps, "intro": intro, "outro": outro, "total": total,
-        "clips": clips, "captions": caption_items, "chips": chips, "cards": cards,
+        "clips": clips, "captions": caption_items, "chips": chips, "cards": cards, "cards": cards,
         "sfx": sfx, "shakes": shakes,
         "ranges": ranges,
     }

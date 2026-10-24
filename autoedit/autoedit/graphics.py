@@ -95,7 +95,8 @@ class Graphics:
             for im in imgs:
                 strip.alpha_composite(im, (x, (th - im.height) // 2))
                 x += im.width + gap
-            sw, sh = max(1, int(tw * scale)), max(1, int(th * scale))
+            fit = min(1.0, (self.W * cfg.get("max_width", 0.86)) / max(1, tw))
+            sw, sh = max(1, int(tw * scale * fit)), max(1, int(th * scale * fit))
             strip = strip.resize((sw, sh), Image.BICUBIC)
             if alpha < 0.999:
                 a = strip.getchannel("A").point(lambda v: int(v * alpha))
@@ -209,21 +210,25 @@ class Graphics:
         y = self.H * self.zone["text_top"] + 10 * self.s
         if cfg.get("center", True):
             y = self.H * 0.40 - len(lines) * 40 * self.s
+        fit = min(1.0, (self.W * 0.86) / max(
+            1, max(self.f_title.getbbox(l)[2] - self.f_title.getbbox(l)[0] for l in lines)))
+        font = self.f_title if fit > 0.99 else ImageFont.truetype(
+            self.f_title.path, max(20, int(self.f_title.size * fit)))
         for i, line in enumerate(lines):
-            bb = self.f_title.getbbox(line)
+            bb = font.getbbox(line)
             w = bb[2] - bb[0]
             x = (self.W - w) / 2
             off = (1 - util.ease_out_expo(a_in)) * 40 * self.s
             yy = y + i * 132 * self.s + off
-            d.text((x, yy + 6 * self.s), line, font=self.f_title, fill=(0, 0, 0, int(150 * a)))
-            d.text((x, yy), line, font=self.f_title, fill=self.paper + (int(255 * a),))
+            d.text((x, yy + 6 * self.s), line, font=font, fill=(0, 0, 0, int(150 * a)))
+            d.text((x, yy), line, font=font, fill=self.paper + (int(255 * a),))
             if i == len(lines) - 1:   # subrayado que crece
                 ul = util.ease_out_expo(util.clamp((t - 0.25) / 0.5))
                 d.rounded_rectangle([x, yy + 126 * self.s, x + w * ul, yy + 138 * self.s],
                                     radius=int(6 * self.s), fill=self.accent + (int(255 * a),))
         if sub:
             bb = self.f_sub.getbbox(sub)
-            d.text(((self.W - (bb[2] - bb[0])) / 2, y + 160 * self.s), sub,
+            d.text(((self.W - (bb[2] - bb[0])) / 2, y + len(lines) * 132 * self.s + 24 * self.s), sub,
                    font=self.f_sub, fill=self.paper + (int(200 * a),))
 
     def outro(self, layer, t, start, dur):
