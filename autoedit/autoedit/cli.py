@@ -72,10 +72,12 @@ def main(argv=None):
     print(f"[3/5] cortes: umbral {thr:.1f} dB | {len(sil)} silencios | "
           f"{len(ranges)} planos | {dur - kept:.2f}s eliminados")
 
-    plan = timeline.build(tr, ranges, cfg, fps=fps, seed=cfg.get("seed", 7))
+    beats = audio.emphasis_peaks(db, hop) if cfg["camera"].get("beat_punch", True) else []
+    plan = timeline.build(tr, ranges, cfg, fps=fps, seed=cfg.get("seed", 7), beats=beats)
     wav = os.path.join(a.work, "mix.wav")
     audio.write_wav(wav, audio.build_track(pcm, ranges, plan["intro"], plan["outro"], plan["sfx"]))
-    print(f"[4/5] audio montado: {plan['total']:.2f}s, {len(plan['sfx'])} efectos")
+    print(f"[4/5] audio montado: {plan['total']:.2f}s, {len(plan['sfx'])} efectos, "
+          f"{len(plan['broll'])} escenas B-roll, {len(plan['punches'])} acentos")
 
     out = render.render(a.input, plan, cfg, a.out, wav, a.work, size=size, fps=fps,
                         preview_frames=a.preview)

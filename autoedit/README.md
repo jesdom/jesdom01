@@ -42,17 +42,21 @@ python -m autoedit -i mi_video.mp4 -o final.mp4
 5. **Dinamismo** (`render.py`) — push-in / pull-out / drift / flotación handheld,
    transiciones (flash, whip-pan con motion blur, glitch por bandas, zoom punch),
    curva en S con split-tone, bloom, viñeta y grano.
-6. **Motion graphics** (`graphics.py`) — subtítulos karaoke palabra por palabra, chips
+6. **Escenas B-roll** (`broll.py`) — tramos de 2–3 s donde la persona desaparece y manda
+   el motion graphics: barras comparativas, pasos de un flujo, checklist y tipografía
+   cinética, sobre fondo animado (degradado, rejilla en movimiento, blobs con parallax),
+   con barrido diagonal de entrada/salida y picture-in-picture opcional del sujeto.
+7. **Motion graphics sobre la toma** (`graphics.py`) — subtítulos karaoke palabra por palabra, chips
    con iconos vectoriales disparados por palabra clave, tarjeta de datos con barras
    animadas y barra de progreso.
-7. **Audio** (`audio.py`) — uniones con crossfade de 18 ms, SFX sintetizados con numpy
+8. **Audio** (`audio.py`) — uniones con crossfade de 18 ms, SFX sintetizados con numpy
    (whoosh, riser, impacto, pop) y máster con highpass + compresor + loudnorm.
 
 ## Configuración
 
 Todo lo editable vive en el JSON: `brand`, `fonts`, `intro`, `outro`, `cut`, `camera`,
 `captions` (incluido `fix_words` para corregir nombres mal transcritos), `grade`,
-`layout`, `keywords`, `cards`, `ui` y `export`. El código no tiene nada específico del
+`layout`, `keywords`, `broll`, `cards`, `ui` y `export`. El código no tiene nada específico del
 video de ejemplo.
 
 ## Requisitos

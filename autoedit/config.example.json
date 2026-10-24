@@ -27,14 +27,15 @@
   "cut": {
     "min_silence": 0.5,
     "pad": 0.14,
-    "min_shot": 2.4,
+    "min_shot": 1.9,
     "split_on_sentences": true
   },
   "camera": {
     "enabled": true,
     "base_zoom": 0.022,
     "move_amount": 0.05,
-    "handheld": 1.0
+    "handheld": 1.0,
+    "beat_punch": true
   },
   "captions": {
     "enabled": true,
@@ -117,9 +118,26 @@
     "scrim": true,
     "scrim_strength": 0.4
   },
-  "cards": [
+  "cards": [],
+  "broll": [
+    {
+      "after_word": "complejas",
+      "type": "steps",
+      "dur": 2.7,
+      "delay": 0.1,
+      "title": "De lo basico a lo complejo",
+      "items": [
+        "Cortes, ritmo y camara",
+        "Subtitulos y motion graphics",
+        "Color, SFX y export"
+      ]
+    },
     {
       "after_word": "minutos",
+      "type": "bars",
+      "dur": 2.8,
+      "delay": 0.05,
+      "pip": true,
       "title": "Mismo video, dos caminos",
       "items": [
         [
@@ -132,9 +150,34 @@
           "4 min",
           0.09
         ]
-      ],
-      "delay": 0.2,
-      "dur": 2.6
+      ]
+    },
+    {
+      "after_word": "carpetas",
+      "type": "checks",
+      "dur": 2.8,
+      "delay": 0.15,
+      "title": "El flujo que lo hace posible",
+      "items": [
+        "Material en su carpeta",
+        "Un solo comando",
+        "Export listo para publicar"
+      ]
+    },
+    {
+      "after_word": "prueba",
+      "type": "kinetic",
+      "dur": 1.5,
+      "delay": 0.0,
+      "title": "",
+      "items": [
+        "Y",
+        "esto",
+        "es",
+        "prueba",
+        "de",
+        "ello"
+      ]
     }
   ]
 }

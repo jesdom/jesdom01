@@ -64,7 +64,7 @@ CAMERA_MOVES = ["push_in", "pull_out", "drift_left", "drift_right", "static_floa
 TRANSITIONS = ["flash", "whip_left", "whip_right", "glitch", "zoom_punch"]
 
 
-def build(transcript, ranges, cfg, fps=30, seed=7):
+def build(transcript, ranges, cfg, fps=30, seed=7, beats=None):
     """Devuelve el plan completo del montaje."""
     rng = random.Random(seed)
     intro = cfg["intro"]["duration"]
@@ -163,6 +163,41 @@ def build(transcript, ranges, cfg, fps=30, seed=7):
                         "slot": len(chips) % 2,
                     })
 
+    # ------------------------------- escenas B-roll (el sujeto desaparece) ---
+    def find_word(word):
+        trig = _norm(word)
+        for seg in transcript or []:
+            for w in seg.get("words", []):
+                if _norm(w["w"]) == trig:
+                    return w["s"], seg
+        return None, None
+
+    broll = []
+    for spec in cfg.get("broll", []):
+        t_src, seg = find_word(spec.get("after_word", ""))
+        if t_src is None:
+            continue
+        items = spec.get("items")
+        if not items and seg:                 # tipografia cinetica: la frase dicha
+            items = [w["w"] for w in seg.get("words", [])][:10]
+        start = max(intro, to_out(t_src) + spec.get("delay", 0.15))
+        broll.append({"type": spec.get("type", "bars"), "title": spec.get("title", ""),
+                      "items": items or [], "start": start, "dur": spec.get("dur", 2.6),
+                      "pip": spec.get("pip", False),
+                      "captions": spec.get("captions", False),
+                      "wipe_in": spec.get("wipe_in", 0.30),
+                      "wipe_out": spec.get("wipe_out", 0.30)})
+    broll.sort(key=lambda b: b["start"])
+    for a, b in zip(broll, broll[1:]):        # sin solapes entre escenas
+        a["dur"] = min(a["dur"], max(0.6, b["start"] - a["start"] - 0.4))
+
+    # --------------------------------------- acentos ritmicos del audio -----
+    punches = []
+    for tb in (beats or []):
+        ot = to_out(tb)
+        if ot > intro + 0.2:
+            punches.append({"t": ot, "amount": 1.0})
+
     # -------------------------------------- tarjetas de datos (refuerzo) ----
     cards = []
     for spec in cfg.get("cards", []):
@@ -210,6 +245,16 @@ def build(transcript, ranges, cfg, fps=30, seed=7):
     for it in caption_items[:40]:
         sfx.append({"t": it["start"], "kind": "pop", "gain": 0.35,
                     "freq": 820 + (int(it["start"] * 7) % 5) * 90})
+    for b in broll:
+        sfx.append({"t": b["start"] - 0.12, "kind": "whoosh", "gain": 0.6, "seed": 5, "dir": 1})
+        sfx.append({"t": b["start"] + b["dur"] - 0.12, "kind": "whoosh", "gain": 0.5,
+                    "seed": 9, "dir": -1})
+        chips[:] = [c for c in chips
+                    if c["start"] + c["dur"] < b["start"] - 0.1
+                    or c["start"] > b["start"] + b["dur"] + 0.3]
+        cards[:] = [c for c in cards
+                    if c["start"] + c["dur"] < b["start"] - 0.1
+                    or c["start"] > b["start"] + b["dur"] + 0.3]
     for cd in cards:   # un chip y una tarjeta nunca compiten por la misma banda
         chips[:] = [c for c in chips
                     if c["start"] + c["dur"] < cd["start"] - 0.1
@@ -225,7 +270,8 @@ def build(transcript, ranges, cfg, fps=30, seed=7):
 
     return {
         "fps": fps, "intro": intro, "outro": outro, "total": total,
-        "clips": clips, "captions": caption_items, "chips": chips, "cards": cards, "cards": cards,
+        "clips": clips, "captions": caption_items, "chips": chips, "cards": cards,
+        "broll": broll, "punches": punches, "cards": cards,
         "sfx": sfx, "shakes": shakes,
         "ranges": ranges,
     }
@@ -267,6 +313,8 @@ def split_on_sentences(ranges, transcript, min_shot=2.4, fps=30):
     if not transcript:
         return ranges
     bounds = sorted({round(s["start"], 3) for s in transcript})
+    word_starts = sorted({round(w["s"], 3) for seg in transcript
+                          for w in seg.get("words", [])})
     out = []
     for (s, e) in ranges:
         pts = [s] + [b for b in bounds if s + min_shot <= b <= e - min_shot] + [e]
@@ -275,6 +323,20 @@ def split_on_sentences(ranges, transcript, min_shot=2.4, fps=30):
             if p - merged[-1] >= min_shot:
                 merged.append(p)
         merged[-1] = e
+        # si un plano sigue siendo muy largo, se parte en el inicio de palabra
+        # mas cercano a su mitad: mantiene el audio intacto y da ritmo
+        grown = True
+        while grown:
+            grown = False
+            for i in range(len(merged) - 1):
+                a, b = merged[i], merged[i + 1]
+                if b - a >= 2 * min_shot:
+                    mid = (a + b) / 2
+                    cand = [x for x in word_starts if a + min_shot <= x <= b - min_shot]
+                    if cand:
+                        merged.insert(i + 1, min(cand, key=lambda x: abs(x - mid)))
+                        grown = True
+                        break
         for a, b in zip(merged, merged[1:]):
             a = round(a * fps) / fps
             b = round(b * fps) / fps

@@ -6,6 +6,7 @@ from PIL import Image
 
 from . import effects as E
 from . import layout
+from .broll import Scenes, wipe
 from . import util
 from .graphics import Graphics
 from .timeline import camera_at
@@ -72,6 +73,7 @@ def render(video_in, plan, cfg, out_path, audio_wav, workdir, size=(1080, 1920),
     zone["caption_y"] = min(zone["floor"] - 0.055, (zone["caption_y"] - 0.5) * zoom_max + 0.5)
     zone["chip_y"] = min(zone["caption_y"] - 0.085, (zone["chip_y"] - 0.5) * zoom_max + 0.5)
     gfx = Graphics(cfg, size, cfg["_font_dir"], zone=zone)
+    scenes = Scenes(gfx, cfg, size)
     lut = E.build_lut(**cfg["grade"]["lut"])
     vig = E.vignette(W, H, cfg["grade"]["vignette"])
     grains = E.grain_bank(W, H, amount=cfg["grade"]["grain"])
@@ -100,6 +102,24 @@ def render(video_in, plan, cfg, out_path, audio_wav, workdir, size=(1080, 1920),
     n_total = int(round(total * fps))
     written = 0
 
+    def active_broll(t):
+        for b in plan["broll"]:
+            if b["start"] - b["wipe_in"] <= t <= b["start"] + b["dur"] + b["wipe_out"]:
+                return b
+        return None
+
+    def apply_broll(img, b, t):
+        """Sustituye la toma por la escena, con barrido de entrada y salida."""
+        age = t - b["start"]
+        p = util.clamp(age / max(0.3, b["dur"]))
+        scene = scenes.render(b, p, t, img)
+        if age < 0:
+            return wipe(img, scene, 1 - (-age / b["wipe_in"]), 1, gfx.accent)
+        out_age = age - b["dur"]
+        if out_age > 0:
+            return wipe(scene, img, out_age / b["wipe_out"], -1, gfx.accent)
+        return scene
+
     def finish(img, t):
         """Grade + grano + vineta + graficos comunes."""
         arr = E.apply_lut(np.asarray(img), lut)
@@ -112,12 +132,16 @@ def render(video_in, plan, cfg, out_path, audio_wav, workdir, size=(1080, 1920),
         if cfg["grade"]["grain"] > 0:
             a = E.add_grain(a, grains[int(t * fps) % len(grains)])
         img = Image.fromarray(np.uint8(np.clip(a, 0, 255)))
-        img = gfx.scrim(img).convert("RGBA")
+        if active_broll(t) is None:
+            img = gfx.scrim(img)
+        img = img.convert("RGBA")
         layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        b = active_broll(t)
         card_on = False
         for cd in plan["cards"]:
             card_on = gfx.card(layer, cd, t) or card_on
-        if not card_on:
+        show_text = not card_on and (b is None or b.get("captions"))
+        if show_text:
             gfx.captions(layer, plan["captions"], t)
             gfx.chips(layer, plan["chips"], t)
         gfx.brand(layer, t, total)
@@ -171,6 +195,10 @@ def render(video_in, plan, cfg, out_path, audio_wav, workdir, size=(1080, 1920),
                 # micro shake en todo corte
                 dx += np.sin(age * 90) * 10 * q
                 dy += np.cos(age * 77) * 8 * q
+            for pu in plan["punches"]:          # acento: micro zoom en los picos
+                d = t - pu["t"]
+                if 0 <= d <= 0.26:
+                    z += 0.030 * (1 - util.ease_out_expo(d / 0.26)) * pu["amount"]
             img = transform(img, z, dx, dy, rot, W, H)
             if extra_blur > 1:
                 img = E.motion_blur_h(img, extra_blur)
@@ -181,6 +209,9 @@ def render(video_in, plan, cfg, out_path, audio_wav, workdir, size=(1080, 1920),
                 elif tr == "glitch":
                     img = E.slice_glitch(img, 0.55 * q, rng)
                     img = E.rgb_split(img, 10 * q)
+            b = active_broll(t)
+            if b is not None:
+                img = apply_broll(img, b, t)
             # realce ritmico en las palabras acentuadas
             for sh in plan["shakes"]:
                 d = t - sh["t"]

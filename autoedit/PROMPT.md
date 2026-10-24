@@ -66,7 +66,35 @@ PASO 4 — DINAMISMO (todo programado, con moderación)
   transición, riser + impacto en la aparición, pop corto en cada entrada de texto.
   Mézclalos por debajo de la voz y pasa el máster por highpass + compresor + loudnorm.
 
-PASO 5 — MOTION GRAPHICS (obligatorios, sincronizados con lo que dice)
+PASO 5 — ESCENAS B-ROLL: QUE NO SALGA LA PERSONA TODO EL RATO
+- Genera escenas a pantalla completa, 100 % dibujadas con código, que SUSTITUYEN la
+  imagen de la persona durante 2–3 s mientras su voz sigue sonando. Al menos tres en un
+  video de 30 s, disparadas por la palabra que yo indique en la configuración:
+  * barras comparativas con cifras grandes (ej. "3 h" vs "4 min"),
+  * pasos de un flujo que se encienden en cadena con su conector,
+  * lista de verificación que se va marcando,
+  * tipografía cinética con la frase que se está diciendo, palabra a palabra.
+- Fondo de escena animado: degradado de marca, rejilla que se desplaza, manchas de color
+  desenfocadas con parallax y el mismo grano del resto del video, para que la escena no
+  parezca una diapositiva pegada.
+- Entrada y salida con barrido diagonal con filo de color + whoosh, nunca un corte seco
+  a negro.
+- En alguna escena deja a la persona en un recuadro pequeño (picture-in-picture) con
+  marco redondeado y sombra, en una esquina, para no perder presencia.
+- Mientras manda la escena, oculta subtítulos y chips: el texto de la escena ya cuenta
+  lo que se dice, dos capas de texto a la vez es ruido.
+- Reparte el contenido por todo el alto (título arriba, cuerpo al centro, puntos de
+  avance y filo de acento abajo): una escena con la mitad inferior vacía se ve pobre.
+
+PASO 6 — RITMO
+- Si el discurso es continuo, no te quedes en un plano largo: subdivide hasta tener
+  planos de 2–3.5 s cortando en el inicio de una palabra (audio intacto, encuadre nuevo).
+- Detecta los picos de energía del audio y mete en ellos un micro zoom punch de ~3 %
+  que decae en 0.26 s: el video "respira" con la voz.
+- Alterna: persona → persona con gráfico → escena B-roll → persona con otro encuadre.
+  Nunca dos planos seguidos con el mismo movimiento de cámara.
+
+PASO 7 — MOTION GRAPHICS SOBRE LA PERSONA (sincronizados con lo que dice)
 - Subtítulos karaoke palabra por palabra: bloques de máximo 3 palabras / 20 caracteres,
   la palabra que se está diciendo en ese instante va resaltada en una píldora de color
   de marca con el resto en blanco con contorno oscuro. Entrada con rebote (spring) y
@@ -84,7 +112,7 @@ PASO 5 — MOTION GRAPHICS (obligatorios, sincronizados con lo que dice)
 - Corrige en los subtítulos las palabras que el transcriptor escribe mal (mapa
   configurable, ej. "Cloud" → "Claude").
 
-PASO 6 — REGLA DE ORO DE LA TIPOGRAFÍA (no negociable)
+PASO 8 — REGLA DE ORO DE LA TIPOGRAFÍA (no negociable)
 - NINGÚN texto ni gráfico puede quedar sobre la cara de la persona.
 - NINGÚN texto en la franja superior del encuadre (ahí no va nada: ni marca, ni hashtag,
   ni título).
@@ -97,13 +125,15 @@ PASO 6 — REGLA DE ORO DE LA TIPOGRAFÍA (no negociable)
   cara baja): proyecta la caja con z_max antes de decidir las alturas.
 - Equilibrio horizontal: ningún bloque de texto puede superar el 86 % del ancho; si se
   pasa, redúcelo proporcionalmente en vez de partirlo mal. Márgenes laterales iguales.
+- En las escenas B-roll no hay cara en pantalla: ahí la composición es libre y el texto
+  puede ocupar todo el alto. La regla aplica solo cuando se ve a la persona.
 - Si el plano es tan cerrado que no queda banda libre (< 17 % de alto), baja la banda al
   mínimo y añade una cinta de contraste en degradado SOLO en esa franja inferior (cubre
   pecho y fondo, nunca la cara) para que el texto se lea.
 - Jerarquía: subtítulos ~84 px, chips ~34 px, tarjeta ~44 px sobre 1080 de ancho, con
   escalado proporcional si la salida cambia de tamaño.
 
-PASO 7 — ROBUSTEZ PARA QUE OTRA PERSONA PUEDA USARLO CON SU VIDEO
+PASO 9 — ROBUSTEZ PARA QUE OTRA PERSONA PUEDA USARLO CON SU VIDEO
 - Nada hardcodeado del video de ejemplo: todo (textos de intro/cierre, colores, palabras
   clave, tarjetas, duraciones, umbrales) vive en el JSON de configuración.
 - Si no hay red para bajar tipografías (Google Fonts vía API CSS), usa una del sistema.
@@ -122,6 +152,8 @@ CRITERIO DE ACEPTACIÓN (revísalo tú mismo antes de entregarme el archivo)
 4. El audio no tiene clics en las uniones y el nivel es constante.
 5. Dime con números qué hizo el script: duración original vs final, cuántos cortes,
    cuántos gráficos y dónde quedó la banda de texto.
+6. Comprueba que hay al menos tres tramos sin la persona en pantalla y que las entradas
+   y salidas de esas escenas caen en pausas naturales del habla, no a mitad de palabra.
 ```
 
 ## ▶️ FIN DEL PROMPT
@@ -145,7 +177,9 @@ Lo mínimo que conviene tocar en el JSON antes de publicar:
 | `brand.accent` / `accent2` | Colores de marca de las píldoras, chips y barras |
 | `intro.title` / `outro.title` | Gancho de apertura y llamada a la acción |
 | `keywords` | Palabra hablada → chip con icono (`spark`, `bolt`, `clock`, `folder`, `check`) |
-| `cards` | Tarjeta de datos y la palabra que la dispara |
+| `broll` | Escenas a pantalla completa: tipo, palabra que las dispara, duración y contenido |
+| `cards` | Tarjeta de datos sobre la toma y la palabra que la dispara |
+| `cut.min_shot` | Duración mínima de plano: bájala para más ritmo |
 | `captions.fix_words` | Arreglar nombres que el transcriptor escribe mal |
 | `layout` | Márgenes de la banda segura si tu plano es más abierto o más cerrado |
 | `cut.min_silence` | Cuán agresivo es el recorte de silencios |
