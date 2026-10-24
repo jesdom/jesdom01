@@ -4,6 +4,8 @@ import os
 import sys
 import cv2
 import numpy as np
+sys_path_added = __import__('sys').path.insert(0, 'b4')
+from walkmask import walk_mask
 
 NF = 209
 OUT = 'b4/out'
@@ -90,6 +92,8 @@ def screen_layer(frame, t, key, cfg):
         for cxx, cyy in [(14, 14), (sw - 15, 14), (14, sh - 15), (sw - 15, sh - 15)]:
             cv2.circle(rr, (cxx, cyy), 14, 255, -1)
         a = cv2.GaussianBlur(rr.astype(np.float32) / 255, (0, 0), 0.8) * min(1, open_p * 2)
+        if key == 'L':                                   # he walks right in front of it: hide it while he covers it
+            a = a * float(np.interp(t, [189, 193, 198, 202], [1, 0, 0, 1]))
         ys, xs = slice(max(0, y0), min(H, y0 + sh)), slice(max(0, x0), min(W, x0 + sw))
         cy0, cx0 = ys.start - y0, xs.start - x0
         sub_a = a[cy0:cy0 + (ys.stop - ys.start), cx0:cx0 + (xs.stop - xs.start)]
@@ -117,6 +121,9 @@ for t in range(NF):
     for key in ('L', 'R', 'C'):
         f = screen_layer(f, t, key, SCREENS[key])
     if t >= 150:                                      # walking out near the camera: he passes in front of the screens
-        f = over(f, C, mask(iC))
+        mw = walk_mask(C, cv2.imread(f'b2/m/{iC:03d}.png', 0))
+        mw = cv2.dilate(mw, np.ones((7, 7), np.uint8))
+        band = np.zeros((H, W), np.float32); band[:760] = 1; band = cv2.GaussianBlur(band, (0, 0), 15)
+        f = over(f, C, np.maximum(mask(iC), mw * band))
     cv2.imwrite(f'{OUT}/{t:03d}.jpg', np.clip(f, 0, 255).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 96])
 print('comp done')
