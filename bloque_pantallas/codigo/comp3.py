@@ -92,8 +92,6 @@ def screen_layer(frame, t, key, cfg):
         for cxx, cyy in [(14, 14), (sw - 15, 14), (14, sh - 15), (sw - 15, sh - 15)]:
             cv2.circle(rr, (cxx, cyy), 14, 255, -1)
         a = cv2.GaussianBlur(rr.astype(np.float32) / 255, (0, 0), 0.8) * min(1, open_p * 2)
-        if key == 'L':                                   # he walks right in front of it: hide it while he covers it
-            a = a * float(np.interp(t, [189, 193, 198, 202], [1, 0, 0, 1]))
         ys, xs = slice(max(0, y0), min(H, y0 + sh)), slice(max(0, x0), min(W, x0 + sw))
         cy0, cx0 = ys.start - y0, xs.start - x0
         sub_a = a[cy0:cy0 + (ys.stop - ys.start), cx0:cx0 + (xs.stop - xs.start)]
