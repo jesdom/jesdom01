@@ -1,0 +1,6 @@
+.work/
+.cache/
+.work_input.mp4
+*.mp4
+__pycache__/
+*.pyc

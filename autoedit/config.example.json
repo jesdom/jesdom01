@@ -1,0 +1,139 @@
+{
+  "seed": 7,
+  "brand": {
+    "accent": "#FFD84D",
+    "accent2": "#35E0C1",
+    "ink": "#101014",
+    "paper": "#FFFFFF"
+  },
+  "fonts": {
+    "display": "Montserrat",
+    "display_weight": 800,
+    "body": "Inter",
+    "body_weight": 600
+  },
+  "intro": {
+    "duration": 1.6,
+    "title": "ESTO LO\nEDITO CODIGO",
+    "subtitle": "sin tocar un timeline",
+    "plate_darken": 0.84,
+    "center": true
+  },
+  "outro": {
+    "duration": 1.5,
+    "title": "TU TURNO",
+    "subtitle": "pega tu video y corre el script"
+  },
+  "cut": {
+    "min_silence": 0.5,
+    "pad": 0.14,
+    "min_shot": 2.4,
+    "split_on_sentences": true
+  },
+  "camera": {
+    "enabled": true,
+    "base_zoom": 0.022,
+    "move_amount": 0.05,
+    "handheld": 1.0
+  },
+  "captions": {
+    "enabled": true,
+    "size": 84,
+    "max_words": 3,
+    "max_chars": 22,
+    "y": 0.74,
+    "fix_words": {
+      "cloud": "Claude",
+      "clod": "Claude"
+    }
+  },
+  "grade": {
+    "lut": {
+      "contrast": 1.12,
+      "lift": 0.015,
+      "gamma": 0.97,
+      "warm": 0.035
+    },
+    "saturation": 1.08,
+    "vignette": 0.38,
+    "grain": 4.0,
+    "bloom": 0.22
+  },
+  "ui": {
+    "progress_bar": true,
+    "tag": null
+  },
+  "keywords": {
+    "claude": {
+      "label": "Claude",
+      "icon": "spark",
+      "dur": 2.0
+    },
+    "cloud": {
+      "label": "Claude",
+      "icon": "spark",
+      "dur": 2.0
+    },
+    "horas": {
+      "label": "Horas de edicion",
+      "icon": "clock",
+      "dur": 1.8
+    },
+    "minutos": {
+      "label": "Minutos",
+      "icon": "bolt",
+      "dur": 1.8
+    },
+    "profesional": {
+      "label": "Nivel pro",
+      "icon": "check",
+      "dur": 1.8
+    },
+    "carpetas": {
+      "label": "Flujo ordenado",
+      "icon": "folder",
+      "dur": 1.8
+    },
+    "resultados": {
+      "label": "Resultados",
+      "icon": "check",
+      "dur": 1.6
+    }
+  },
+  "export": {
+    "crf": 18,
+    "preset": "medium",
+    "fps": 30,
+    "width": 1080,
+    "height": 1920
+  },
+  "layout": {
+    "face_margin": 0.05,
+    "min_top": 0.6,
+    "max_top": 0.76,
+    "bottom_margin": 0.085,
+    "min_band": 0.17,
+    "scrim": true,
+    "scrim_strength": 0.4
+  },
+  "cards": [
+    {
+      "after_word": "minutos",
+      "title": "Mismo video, dos caminos",
+      "items": [
+        [
+          "Edicion manual",
+          "3 h",
+          1.0
+        ],
+        [
+          "Con este script",
+          "4 min",
+          0.09
+        ]
+      ],
+      "delay": 0.2,
+      "dur": 2.6
+    }
+  ]
+}
