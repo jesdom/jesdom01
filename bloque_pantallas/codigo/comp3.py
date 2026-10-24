@@ -5,7 +5,7 @@ import sys
 import cv2
 import numpy as np
 sys_path_added = __import__('sys').path.insert(0, 'b4')
-from walkmask import walk_mask
+from walkmask import walk_mask, PLATE
 
 NF = 209
 OUT = 'b4/out'
@@ -112,8 +112,17 @@ for t in range(NF):
     f = C.copy()
     f = over(f, align(src(iA)), mask(iA, True))
     f = over(f, align(src(iB)), mask(iB, True))
-    f = over(f, C, mask(iC))                          # center person always in front
     mA, mB, mC = mask(iA, True), mask(iB, True), mask(iC)
+    # where the center layer overlaps a side clone, keep it in front only on his actual body
+    # (pixels that differ from the empty-room plate); its stray sofa must not erase the clone
+    body = cv2.GaussianBlur(np.abs(C - PLATE).max(2), (0, 0), 2) > 22
+    body = cv2.morphologyEx(body.astype(np.uint8), cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15)))
+    body = cv2.GaussianBlur(cv2.dilate(body, np.ones((5, 5), np.uint8)).astype(np.float32), (0, 0), 1.5)
+    side = np.clip(np.maximum(mA, mB) * 3, 0, 1)
+    if t >= 172:                                      # walking out in front of the left clone: he is fully in front
+        side = side * 0
+    mC = mC * (1 - side) + np.minimum(mC, body) * side
+    f = over(f, C, mC)                                # center person in front
     near = lambda m: cv2.GaussianBlur((m > 0.5).astype(np.float32), (0, 0), 7)
     side = np.maximum(near(mA), near(mB))
     gap = np.clip(side * near(mC) * 4, 0, 1) * (1 - np.maximum(np.maximum(mA, mB), mC))
@@ -124,6 +133,6 @@ for t in range(NF):
         mw = walk_mask(C, cv2.imread(f'b2/m/{iC:03d}.png', 0))
         mw = cv2.dilate(mw, np.ones((7, 7), np.uint8))
         band = np.zeros((H, W), np.float32); band[:760] = 1; band = cv2.GaussianBlur(band, (0, 0), 15)
-        f = over(f, C, np.maximum(mask(iC), mw * band))
+        f = over(f, C, np.maximum(mC, mw * band * (1 - side) + np.minimum(mw, body) * band * side))
     cv2.imwrite(f'{OUT}/{t:03d}.jpg', np.clip(f, 0, 255).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 96])
 print('comp done')
