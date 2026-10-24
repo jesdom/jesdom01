@@ -241,18 +241,20 @@ class Graphics:
         d = ImageDraw.Draw(layer)
         k = util.spring(util.clamp(age / 0.45), 2.0, 7.0)
         bb = self.f_title.getbbox(title)
-        w, hgt = bb[2] - bb[0], bb[3] - bb[1]
+        sb = self.f_sub.getbbox(sub) if sub else (0, 0, 0, 0)
+        w = max(bb[2] - bb[0], sb[2] - sb[0])
+        hgt = bb[3] - bb[1]
+        sub_h = (sb[3] - sb[1] + int(26 * self.s)) if sub else 0
         x, y = (self.W - w) / 2, self.H * 0.44
-        pad = int(34 * self.s)
-        rounded(d, (x - pad, y - pad * .7, x + w + pad, y + hgt + pad),
-                int(28 * self.s), fill=self.ink + (int(226 * a),),
+        pad = int(38 * self.s)
+        rounded(d, (x - pad, y - pad * .8, x + w + pad, y + hgt + sub_h + pad),
+                int(30 * self.s), fill=self.ink + (int(232 * a),),
                 outline=self.accent + (int(255 * a),), width=int(4 * self.s))
-        d.text((x, y - bb[1] + (1 - k) * 18 * self.s), title, font=self.f_title,
-               fill=self.paper + (int(255 * a),))
+        d.text(((self.W - (bb[2] - bb[0])) / 2, y - bb[1] + (1 - k) * 18 * self.s), title,
+               font=self.f_title, fill=self.paper + (int(255 * a),))
         if sub:
-            sb = self.f_sub.getbbox(sub)
-            d.text(((self.W - (sb[2] - sb[0])) / 2, y + hgt + pad * 1.9), sub,
-                   font=self.f_sub, fill=self.accent + (int(240 * a),))
+            d.text(((self.W - (sb[2] - sb[0])) / 2, y + hgt + int(22 * self.s) - sb[1]),
+                   sub, font=self.f_sub, fill=self.accent + (int(240 * a),))
 
     # ------------------------------------------------- cinta de contraste ---
     def scrim(self, img):
@@ -282,7 +284,8 @@ class Graphics:
         pad = int(30 * self.s)
         w = int(self.W * 0.82)
         rows = card.get("items", [])
-        h = int((96 + 86 * len(rows)) * self.s)
+        row_h = 84
+        h = int((92 + row_h * len(rows) + 16) * self.s)
         im = Image.new(RGBA, (w, h), (0, 0, 0, 0))
         d = ImageDraw.Draw(im)
         rounded(d, (0, 0, w - 1, h - 1), int(30 * self.s), fill=self.ink + (236,),
@@ -291,20 +294,24 @@ class Graphics:
                fill=self.paper + (210,))
         bar_x = int(w * 0.40)
         bar_w = w - bar_x - pad
+        vw = max(self.f_card.getbbox(str(v))[2] - self.f_card.getbbox(str(v))[0]
+                 for _, v, _ in rows) if rows else 0
+        bar_w = w - bar_x - pad - vw - int(18 * self.s)
         for i, (label, value, frac) in enumerate(rows):
-            y = int((96 + 86 * i) * self.s)
-            d.text((pad, y + int(10 * self.s)), label, font=self.f_small,
+            y = int((92 + row_h * i) * self.s)
+            top, bot = y + int(8 * self.s), y + int(56 * self.s)
+            d.text((pad, y + int(16 * self.s)), label, font=self.f_small,
                    fill=self.paper + (190,))
             grow = util.ease_out_expo(util.clamp((age - 0.25 - i * 0.14) / 0.55))
             col = self.accent if i == len(rows) - 1 else self.accent2
-            bw = max(int(6 * self.s), int(bar_w * float(frac) * grow))
-            rounded(d, (bar_x, y + int(4 * self.s), bar_x + bar_w, y + int(46 * self.s)),
-                    int(14 * self.s), fill=(255, 255, 255, 28), width=0)
-            rounded(d, (bar_x, y + int(4 * self.s), bar_x + bw, y + int(46 * self.s)),
-                    int(14 * self.s), fill=col + (245,), width=0)
+            bw = max(int(8 * self.s), int(bar_w * float(frac) * grow))
+            rounded(d, (bar_x, top, bar_x + bar_w, bot), int(14 * self.s),
+                    fill=(255, 255, 255, 28), width=0)
+            rounded(d, (bar_x, top, bar_x + bw, bot), int(14 * self.s),
+                    fill=col + (245,), width=0)
             vb = self.f_card.getbbox(str(value))
-            d.text((bar_x + bar_w - (vb[2] - vb[0]), y + int(52 * self.s)), str(value),
-                   font=self.f_card, fill=col + (int(255 * util.clamp(grow * 1.4)),))
+            d.text((w - pad - (vb[2] - vb[0]), top + int(2 * self.s) - vb[1]), str(value),
+                   font=self.f_card, fill=col + (int(255 * util.clamp(grow * 1.6)),))
         im.putalpha(im.getchannel("A").point(lambda v: int(v * alpha)))
         y0 = int(self.H * self.zone["text_top"]) - int(40 * self.s)
         y0 = min(y0, int(self.H * self.zone["floor"]) - h - int(10 * self.s))
