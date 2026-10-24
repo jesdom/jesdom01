@@ -12,8 +12,10 @@ def walk_mask(frame, u2):
     m = cv2.morphologyEx(m.astype(np.uint8) * 255, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
     m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (35, 35)))
     # fill holes
-    ff = m.copy(); h, w = m.shape; cv2.floodFill(ff, np.zeros((h + 2, w + 2), np.uint8), (0, 0), 255)
-    m = m | cv2.bitwise_not(ff)
+    # pad with an empty border so the flood always starts on background, even when he touches the frame edge
+    ff = cv2.copyMakeBorder(m, 1, 1, 1, 1, cv2.BORDER_CONSTANT, value=0); h, w = ff.shape
+    cv2.floodFill(ff, np.zeros((h + 2, w + 2), np.uint8), (0, 0), 255)
+    m = m | cv2.bitwise_not(ff[1:-1, 1:-1])
     # keep components that touch the detected person
     n, lab, st, _ = cv2.connectedComponentsWithStats(m)
     keep = np.zeros_like(m)
