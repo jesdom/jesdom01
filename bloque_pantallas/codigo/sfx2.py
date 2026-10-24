@@ -36,7 +36,8 @@ t = fr(44)
 while t < fr(150):
     p = (t - fr(44)) / (fr(150) - fr(44)); tick(t, -0.6, 0.10 * (1 - 0.6 * p)); t += 0.045 + 0.12 * p ** 2
 # reel swipe on the right screen
-swipe(fr(112), 0.6)
+for f in (58, 76, 94, 112):
+    swipe(fr(f), 0.6, 0.24)
 # center screen collapses
 n = int(0.25 * SR); tt = np.arange(n) / SR
 add(np.sin(2 * np.pi * (1400 * np.exp(-tt * 9) + 200) * tt) * env(n, 0.003, 0.08), fr(128), 0.0, 0.35)
